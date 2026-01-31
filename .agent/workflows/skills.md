@@ -1,8 +1,8 @@
 ---
-description: use SKILL
+description: use SKILL.md
 ---
 
-Read @.agent/skills/Camera/SKILL.md
+Read @.agent/skills/Go2/SKILL.md
 import @utils 工具模組加入記憶體監控到之後的py
 使用方式：
 
