@@ -1,11 +1,5 @@
 # 手勢辨識技術方案
 
-本文件記錄可用於 Intel RealSense D435 及一般 RGB 相機的手勢辨識技術方案。
-
-![1769854974826](image/gesture_recognition/1769854974826.png)
-
----
-
 ## 目錄
 
 1. [技術方案總覽](#技術方案總覽)
@@ -33,7 +27,7 @@
 
 追蹤手掌上每個關節的 2D/3D 座標，能辨識精細手勢（如：數字 1-5、比讚、OK）。
 
-![Hand Skeleton Example](image/realsense_d435_features/1769788572006.png)
+![1769856932838](image/gesture_recognition/1769856932838.png)
 
 ### MediaPipe Hands (Google)
 
