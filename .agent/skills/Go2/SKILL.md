@@ -1,6 +1,7 @@
 ---
 name: RealSense D435 Camera Development
 description: 在各平台開發 Intel RealSense D435 相機 (深度/RGB) 的技巧與限制
+https://github.com/realsenseai/librealsense/blob/master/doc/installation_osx.md
 ---
 
 # Intel RealSense D435 開發指南
@@ -269,12 +270,12 @@ ros2 topic pub /webrtc_req go2_interfaces/msg/WebRtcReq \
 
 這是專題的核心邏輯，分為快系統與慢系統：
 
-| 層級          | 技術               | 回答的問題                   | 部署位置      | 特性                                               |
-| ------------- | ------------------ | ---------------------------- | ------------- | -------------------------------------------------- |
-| **1. 感知層** | RealSense 深度     | 「前面多遠？會撞到嗎？」     | Jetson (本地) | **<50ms (即時)**`<br>`不需光線、絕對距離           |
-| **2. 辨識層** | YOLO / COCO        | 「前面是什麼物體？」         | Jetson (本地) | **~30ms (即時)**`<br>`標準物件分類 (人、椅、貓)    |
-| **3. 導航層** | SLAM + Nav2        | 「我在哪裡？要怎麼走過去？」 | Jetson (本地) | **~100ms**`<br>`使用 Go2 內建 LiDAR 建圖與路徑規劃 |
-| **4. 理解層** | VLM (視覺語言模型) | 「這個場景代表什麼意思？」   | 雲端 GPU      | **~1-2s (慢)**`<br>`情境推理、開放詞彙、異常偵測   |
+| 層級          | 技術               | 回答的問題                   | 部署位置      | 特性                                                |
+| ------------- | ------------------ | ---------------------------- | ------------- | --------------------------------------------------- |
+| **1. 感知層** | RealSense 深度     | 「前面多遠？會撞到嗎？」     | Jetson (本地) | **<50ms (即時)**`<br>`不需光線、絕對距離            |
+| **2. 辨識層** | YOLO / COCO        | 「前面是什麼物體？」         | Jetson (本地) | **~30ms (即時)**`<br>`標準物件分類 (人、椅、貓)     |
+| **3. 導航層** | SLAM + Nav2        | 「我在哪裡？要怎麼走過去？」 | Jetson (本地) | **~100ms** `<br>`使用 Go2 內建 LiDAR 建圖與路徑規劃 |
+| **4. 理解層** | VLM (視覺語言模型) | 「這個場景代表什麼意思？」   | 雲端 GPU      | **~1-2s (慢)**`<br>`情境推理、開放詞彙、異常偵測    |
 
 ### 未來 AI 整合計畫
 
@@ -310,6 +311,22 @@ ros2 topic pub /webrtc_req go2_interfaces/msg/WebRtcReq \
 
 ---
 
+## 🛠️ Demo 功能展示與比較 (Demo Showcase)
+
+以下是目前已開發完成的 RealSense D435 功能模組，可直接在 Mac M4 上執行：
+
+| 腳本名稱                 | 功能描述                | 關鍵技術                        | 應用場景                       |
+| :----------------------- | :---------------------- | :------------------------------ | :----------------------------- |
+| **`obstacle.py`**        | **原力控制** (基礎避障) | Depth Threshold, Center ROI     | 測試相機距離感測、除錯         |
+| **`smart_avoid.py`**     | **智慧避障** (多區偵測) | Multi-zone Depth, Logic         | 機器狗的「反射神經」，防止撞牆 |
+| **`follow_person.py`**   | **人員跟隨**            | Depth Blob Tracking             | 讓狗跟著走、保持固定距離       |
+| **`face_rec_remote.py`** | **遠端人臉辨識**        | RGB Stream, InsightFace, Socket | 辨識主人、防盜、個人化互動     |
+| **`object_sizer.py`**    | **物件量測**            | Depth Contour, Intrinsics       | 測量包裹尺寸、估算物體大小     |
+| **`pointcloud.py`**      | **3D 點雲掃描**         | Deprojection (2D->3D), Open3D   | 建立房間 3D 模型、SLAM 基礎    |
+| **`night_vision.py`**    | **夜視模式**            | IR Stream, Emitter Control      | 在全黑環境下導航、監控         |
+
+---
+
 ## 📁 專案檔案結構
 
 ```
@@ -319,11 +336,17 @@ Go2_Project/
 │   │   └── obstacle_json.py   # MCP 相容避障模組 (JSON 輸出)
 │   ├── demo/
 │   │   ├── obstacle.py        # 避障/原力控制模擬器
+│   │   ├── smart_avoid.py     # 智慧避障 (多區偵測)
+│   │   ├── follow_person.py   # 人員跟隨模擬器
+│   │   ├── face_rec_remote.py # 遠端人臉辨識 (需搭配 Windows)
+│   │   ├── object_sizer.py    # 物件體積測量器
 │   │   ├── pointcloud.py      # 3D 點雲掃描器
 │   │   └── night_vision.py    # 夜視模式 Demo
 │   ├── test/
 │   │   └── test_depth.py      # 深度相機測試
 │   └── show_camera.py         # RGB+Depth 顯示 (Linux 用)
+├── report/
+│   └── integration_and_features.md # 整合策略與新功能建議 (New!)
 ├── docs/
 │   ├── obstacle.md            # 避障模擬器說明
 │   └── pointcloud.md          # 點雲掃描器說明

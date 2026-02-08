@@ -3,3 +3,7 @@ __pycache__/
 .DS_Store
 *.pyc
 .vscode/
+
+# Large model files (>100MB, cannot push to GitHub)
+*.onnx
+camera/models/models/buffalo_s.zip
