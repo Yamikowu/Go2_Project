@@ -7,3 +7,6 @@ __pycache__/
 # Large model files (>100MB, cannot push to GitHub)
 *.onnx
 camera/models/models/buffalo_s.zip
+
+camera/models/models/
+
