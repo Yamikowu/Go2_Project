@@ -1,12 +1,28 @@
+# ========== Python 環境與虛擬環境 ==========
 .venv/
+venv/
 __pycache__/
-.DS_Store
 *.pyc
+*.pyo
+*.pyd
+.DS_Store
+
+# ========== 編輯器設定 ==========
 .vscode/
+.idea/
 
-# Large model files (>100MB, cannot push to GitHub)
+# ========== AI 模型與資料庫 ==========
+# 這些檔案太大且不屬於程式碼，不應上傳 GitHub
+camera/models/
 *.onnx
-camera/models/models/buffalo_s.zip
+*.weights
+*.pt
 
-camera/models/models/
+# ========== 使用者資料與執行結果 ==========
+# 這些是每台機器獨立的運行資料，包含隱私照片
+camera/faces_db/
+camera/screenshots/
 
+# ========== 臨時檔案 ==========
+*.log
+tmp/
