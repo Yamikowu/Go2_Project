@@ -46,20 +46,32 @@ class GestureDetector:
     def _get_fingers_up(self, landmarks):
         """
         判斷五根手指是伸直(1)還是彎曲(0)
+        改用向量與距離判斷，而非單純看螢幕座標 (Y軸)，這樣手轉 90 度或倒過來也能成功辨識。
         """
+        import math
         fingers = []
         
-        # --- 判斷大拇指 (比較特殊，看 X 軸) ---
-        # 這裡為了簡化，先判斷右手的邏輯：指尖(4)的 X 是否大於關節(3)
-        if landmarks[self.tip_ids[0]].x > landmarks[self.tip_ids[0] - 1].x:
-            fingers.append(1)
+        # 取得手腕位置 (掌心底部, index 0)
+        wrist = landmarks[0]
+        
+        def calc_distance(p1, p2):
+            return math.hypot(p1.x - p2.x, p1.y - p2.y)
+        
+        # --- 判斷大拇指 ---
+        # 比較 大拇指尖端(4)到小拇指根部(17)的距離 與 大拇指關節(3)到小拇指根部(17)的距離
+        # 因為大拇指伸直的時候，指尖會遠離小拇指的根部
+        if calc_distance(landmarks[4], landmarks[17]) > calc_distance(landmarks[3], landmarks[17]):
+            fingers.append(1) # 大拇指張開
         else:
             fingers.append(0)
 
-        # --- 判斷其他四根手指 (看 Y 軸) ---
-        # OpenCV 影像的 Y 軸越往下數值越大，所以「小於」代表在畫面的「上方」(伸直)
+        # --- 判斷其他四根手指 (食指、中指、無名指、小拇指) ---
+        # 如果 指尖(Tip) 到手腕(Wrist)的距離，大於 中間關節(PIP) 到手腕的距離，就是伸直的
         for id_ in range(1, 5):
-            if landmarks[self.tip_ids[id_]].y < landmarks[self.tip_ids[id_] - 2].y:
+            tip = landmarks[self.tip_ids[id_]]          # 指尖點 (8, 12, 16, 20)
+            mid = landmarks[self.tip_ids[id_] - 2]      # 指中關節點 (6, 10, 14, 18)
+            
+            if calc_distance(tip, wrist) > calc_distance(mid, wrist):
                 fingers.append(1) # 伸直
             else:
                 fingers.append(0) # 彎曲
@@ -74,24 +86,52 @@ class GestureDetector:
         
         # 五指全開
         if count == 5:
-            return "Paper (Stop)"
+            return "Five"
         
         # 五指全縮
         elif count == 0:
-            return "Fist (Ready)"
+            return "Zero"
             
         # 只有大拇指
         elif fingers == [1, 0, 0, 0, 0]:
-            return "Thumbs Up (Good)"
+            return "Good"
             
         # 只有食指
         elif fingers == [0, 1, 0, 0, 0]:
-            return "Index Point"
+            return "One"
             
         # 食指 + 中指 (YA)
         elif fingers == [0, 1, 1, 0, 0]:
-            return "Scissors (Peace)"
+            return "Two"
             
+        elif fingers == [0, 1, 1, 1, 0]:
+            return "Three"
+        
+        elif fingers == [0, 1, 1, 1, 1]:
+            return "Four"
+        
+
+        elif fingers == [0, 0, 1, 0, 0]:
+            return "Fk"
+
+        elif fingers == [1, 0, 0, 0, 1]:
+            return "666"
+
+        elif fingers == [0, 0, 0, 0, 1]:
+            return "loser"
+
+        elif fingers == [1, 1, 0, 0, 1]:
+            return "love u"
+        
+        elif fingers == [0, 1, 0, 0, 1]:
+            return "rocknroll"
+
+        elif fingers == [1, 1, 0, 0, 0]:
+            return "Gun"
+        
+        elif fingers == [1, 1, 1, 0, 0]:
+            return "ShotGun"
+
         return "Unknown"
 
 # =========================================================================

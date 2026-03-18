@@ -1,0 +1,49 @@
+--- camera/demo/gesture_recognition.py
++++ camera/demo/gesture_recognition.py
+@@ -1,5 +1,6 @@
+ import cv2
+ import mediapipe as mp
++import math
+ 
+ class GestureDetector:
+     def __init__(self, max_hands=1, detection_con=0.7, track_con=0.7):
+@@ -51,20 +52,38 @@
+         
+-        # --- 判斷大拇指 (比較特殊，看 X 軸) ---
+-        # 這裡為了簡化，先判斷右手的邏輯：指尖(4)的 X 是否大於關節(3)
+-        if landmarks[self.tip_ids[0]].x > landmarks[self.tip_ids[0] - 1].x:
++        # 取得掌心 (0號點) 的座標，作為參考點
++        wrist = landmarks[0]
++        
++        # 改用計算距離與向量的方式，而不是單純看 Y 坐標
++        # 這樣手轉 90 度或反過來也能辨識
++
++        def calc_distance(p1, p2):
++            return math.hypot(p1.x - p2.x, p1.y - p2.y)
++
++        # --- 判斷大拇指 ---
++        # 比較 大拇指尖端(4)到小拇指根部(17)的距離 與 大拇指關節(3)到小拇指根部的距離
++        # 如果尖端離得比較遠，代表大拇指是張開的
++        if calc_distance(landmarks[4], landmarks[17]) > calc_distance(landmarks[3], landmarks[17]):
+             fingers.append(1)
+         else:
+             fingers.append(0)
+ 
+-        # --- 判斷其他四根手指 (看 Y 軸) ---
+-        # OpenCV 影像的 Y 軸越往下數值越大，所以「小於」代表在畫面的「上方」(伸直)
++        # --- 判斷其他四根手指 ---
++        # 比較 指尖 到 掌心(0) 的距離，與 指根關節 到 掌心(0) 的距離
+         for id_ in range(1, 5):
+-            if landmarks[self.tip_ids[id_]].y < landmarks[self.tip_ids[id_] - 2].y:
++            # tip_id 是指尖 (8, 12, 16, 20)
++            # mip_id 是中间关节 (6, 10, 14, 18)
++            tip = landmarks[self.tip_ids[id_]]
++            mip = landmarks[self.tip_ids[id_] - 2]
++            
++            # 如果指尖到掌心的距離 > 中間關節到掌心的距離，代表手指是伸直伸出去的
++            if calc_distance(tip, wrist) > calc_distance(mip, wrist):
+                 fingers.append(1) # 伸直
+             else:
+                 fingers.append(0) # 彎曲
+                 
+         return fingers
