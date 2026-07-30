@@ -1,5 +1,6 @@
 # camera/demo/face_rec_local.py
-# 用法：/Users/yamiko/Documents/VsCode/Go2_Project/.venv/bin/python camera/demo/face_rec_local.py
+# 用法：python camera/demo/face_rec_local.py （需先 activate 虛擬環境）
+# 或使用絕對路徑：/Users/yamiko/Code/Archive/School/Go2_Project/.venv/bin/python camera/demo/face_rec_local.py
 # 功能：
 # 1. 使用 Mac 內建相機 或 iPhone 接續互通相機 (Continuity Camera)
 # 2. 使用 InsightFace 進行人臉偵測與辨識
