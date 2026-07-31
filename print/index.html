@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Windows Printer API 測試工具</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <!-- 引入 qrcode-generator (不依賴 DOM，純計算產生 QR matrix) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🖨️ Printer API Tester</h1>
+            <div class="config-section">
+                <label>API Base URL</label>
+                <div class="input-group">
+                    <input type="text" id="api-url" value="http://192.168.137.1:8080" placeholder="http://192.168.xxx.xxx:8080">
+                    <button id="btn-test" class="btn btn-secondary">測試連線</button>
+                </div>
+                <div id="status-msg" class="status"></div>
+            </div>
+        </header>
+
+        <main>
+            <div class="form-section">
+                <h2>📝 收據內容</h2>
+                
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>店家名稱</label>
+                        <input type="text" id="store-name" value="MSI 三廠咖啡吧">
+                    </div>
+                    <div class="form-group">
+                        <label>訂單編號</label>
+                        <input type="text" id="order-num" value="ORD-20260731001">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>QR Code 網址 (選填)</label>
+                    <input type="text" id="qr-url" value="https://example.com/survey" placeholder="例如: https://... (會印在收據底部)">
+                </div>
+
+                <div class="form-group">
+                    <label>Logo 圖片 (選填，建議寬度 ≤ 200px)</label>
+                    <input type="file" id="logo-file" accept="image/*">
+                    <button id="btn-clear-logo" class="btn btn-outline" style="margin-top:0.5rem; display:none;">移除 Logo</button>
+                </div>
+
+                <div class="items-section">
+                    <h3>品項列表</h3>
+                    <div class="table-container">
+                        <table id="items-table">
+                            <thead>
+                                <tr>
+                                    <th>品項名稱</th>
+                                    <th>數量</th>
+                                    <th>單價</th>
+                                    <th>小計</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="items-tbody">
+                                <!-- Items will be injected here by app.js -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <button id="btn-add-item" class="btn btn-outline">+ 新增品項</button>
+                </div>
+
+                <div class="total-section">
+                    <strong>總金額: <span id="total-amount">0</span></strong>
+                </div>
+
+                <div class="form-group">
+                    <label>備註</label>
+                    <textarea id="notes" rows="2">半糖少冰</textarea>
+                </div>
+            </div>
+
+            <div class="preview-section">
+                <h2>👀 收據預覽 (Canvas → PNG)</h2>
+                <div class="receipt-canvas-wrapper">
+                    <canvas id="receipt-canvas" width="544"></canvas>
+                </div>
+
+                <div class="print-options">
+                    <h3>⚙️ 列印選項</h3>
+                    <div class="options-row">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="opt-cut" checked>
+                            自動切紙
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="opt-drawer">
+                            開啟錢箱
+                        </label>
+                        <label class="number-label">
+                            列印份數
+                            <input type="number" id="opt-copies" value="1" min="1" max="10">
+                        </label>
+                    </div>
+                </div>
+
+                <button id="btn-print" class="btn btn-primary btn-large">🖨️ 傳送列印</button>
+                <div id="print-msg" class="status"></div>
+            </div>
+        </main>
+    </div>
+    
+    <script type="module" src="app.js"></script>
+</body>
+</html>
